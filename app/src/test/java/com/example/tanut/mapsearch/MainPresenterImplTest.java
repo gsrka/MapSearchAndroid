@@ -1,7 +1,11 @@
 package com.example.tanut.mapsearch;
 
 import com.example.tanut.mapsearch.data.db.MyItemReader;
+import com.example.tanut.mapsearch.data.db.backend.AppDatabase;
 import com.example.tanut.mapsearch.data.db.model.MyItem;
+import com.example.tanut.mapsearch.data.db.network.model.MapItem;
+import com.example.tanut.mapsearch.ui.main.MainMvpView;
+import com.example.tanut.mapsearch.ui.main.MainPresenterImpl;
 import com.example.tanut.mapsearch.ui.map.MapMvpView;
 import com.example.tanut.mapsearch.ui.map.MapPresenterImpl;
 
@@ -29,30 +33,33 @@ import static org.mockito.Mockito.verify;
  */
 
 @RunWith(MockitoJUnitRunner.class)
-public class MapPresenterImplTest {
+public class MainPresenterImplTest {
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock
-    MapMvpView view ;
+    MainMvpView view ;
 
     @Mock
     MyItemReader mReader;
 
-    private MapPresenterImpl presenter;
+    @Mock
+    AppDatabase database;
+
+    private MainPresenterImpl presenter;
     private static final List<MyItem> MANY_ITEM = Arrays.asList(new MyItem(0,0), new MyItem(0,0), new MyItem(0,0));
 
     @Before
     public void setUp() throws Exception {
-        presenter = new MapPresenterImpl(view,mReader);
+        presenter = new MainPresenterImpl(view,mReader,database);
     }
 
     @Test
     public void shouldPassItems() {
         Mockito.when(mReader.read(null)).thenReturn(MANY_ITEM);
         presenter.getGeoPlaceData("TEST",null);
-        verify(view).showMarkerCluster(MANY_ITEM);
+        verify(view).manageLocalData(MANY_ITEM);
     }
 
     @Test

@@ -3,7 +3,9 @@ package com.example.tanut.mapsearch.dagger;
 import android.content.Context;
 
 import com.example.tanut.mapsearch.R;
-import com.google.android.gms.maps.MapView;
+import com.example.tanut.mapsearch.data.db.backend.AppDatabase;
+import com.example.tanut.mapsearch.services.ApiClient;
+import com.example.tanut.mapsearch.services.GoogleMapWebService;
 
 import java.io.InputStream;
 
@@ -20,6 +22,7 @@ import dagger.Provides;
 public class MapModule {
 
     private Context mContext;
+    private ApiClient mApiClient;
 
     public MapModule(Context mContext) {
         this.mContext = mContext;
@@ -30,5 +33,24 @@ public class MapModule {
     @Singleton
     InputStream getInputStream() {
         return mContext.getResources().openRawResource(R.raw.radar_search);
+    }
+
+    @Provides
+    @Singleton
+    ApiClient getClient() {
+        mApiClient = new ApiClient(mContext);
+        return mApiClient;
+    }
+
+    @Provides
+    @Singleton
+    GoogleMapWebService getMapWebService() {
+        return mApiClient.getMapService();
+    }
+
+    @Provides
+    @Singleton
+    AppDatabase getAppDatabase() {
+        return AppDatabase.getDatabase(mContext);
     }
 }
