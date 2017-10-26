@@ -14,6 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.tanut.mapsearch.R;
 import com.example.tanut.mapsearch.data.db.model.MyItem;
 import com.example.tanut.mapsearch.data.db.network.model.MapItem;
@@ -185,10 +188,12 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Map
 
         googleMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
 
+        googleMap.setOnInfoWindowClickListener(mClusterManager);
+
         mClusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<MapItem>() {
             @Override
             public void onClusterItemInfoWindowClick(MapItem mapItem) {
-                Log.d(TAG,"DETAIL CLICK");
+                Log.d("ON CLUSTER","ON CLUSTER ITEM INFO WINDOW");
                 FragmentManager fm = getChildFragmentManager();
                 ListDetailsFragment listDetailsFragment = ListDetailsFragment.newInstance(mapItem);
                 listDetailsFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.Dialog_FullScreen);
@@ -281,12 +286,34 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Map
         }
 
         @Override
-        protected void onClusterItemRendered(MapItem clusterItem, Marker marker) {
+        protected void onClusterItemRendered(final MapItem clusterItem, final Marker marker) {
             super.onClusterItemRendered(clusterItem, marker);
 
-            PicassoMarker picassoMarker = new PicassoMarker(marker);
+          /*  PicassoMarker picassoMarker = new PicassoMarker(marker);
 
-            Picasso.with(getContext()).load(clusterItem.getIcon()).into(picassoMarker);
+            Picasso.with(getContext()).load(clusterItem.getIcon()).into(new PicassoMarker(marker){
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+
+                        mImageView.setImageBitmap(bitmap);
+                    Bitmap icon = mIconGenerator.makeIcon();
+                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(icon));
+
+                }
+            });  */
+
+            Glide.with(getContext())
+                    .load(clusterItem.getIcon())
+                    .thumbnail(0.1f)
+                    .into(new SimpleTarget<Drawable>(){
+
+                        @Override
+                        public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
+                            mImageView.setImageDrawable(resource);
+                            Bitmap icon = mIconGenerator.makeIcon();
+                            marker.setIcon(BitmapDescriptorFactory.fromBitmap(icon));
+                        }
+                    } );
         }
 
         @Override
@@ -336,7 +363,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Map
 
         @Override
         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-            mMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
+           // mMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
         }
 
         @Override

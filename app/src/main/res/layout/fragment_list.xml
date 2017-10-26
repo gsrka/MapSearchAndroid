@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mRoot"
     android:layout_marginTop="60dp"
+    android:background="@color/white"
     tools:context="com.example.tanut.mapsearch.ui.list.ListFragment">
 
     <android.support.v7.widget.RecyclerView

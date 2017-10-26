@@ -173,7 +173,8 @@ public class MainFragment extends BaseFragment implements MainMvpView {
             public void onClick(View v) {
 
                     getChildFragmentManager().beginTransaction()
-                            .replace(R.id.container, listFragment, ListFragment.TAG).addToBackStack(null).commit();
+                            .add(R.id.container, listFragment, ListFragment.TAG).addToBackStack(null).commit();
+
 
             }
         });
